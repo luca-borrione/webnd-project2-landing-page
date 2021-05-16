@@ -44,6 +44,18 @@ const state = {
  *
  */
 
+function isScrollIntoViewSupported() {
+  return 'scrollIntoView' in Element.prototype;
+}
+
+function isScrollToSupported() {
+  return 'scrollTo' in window;
+}
+
+function isSmoothScrollSupported() {
+  return 'scrollBehavior' in document.documentElement.style;
+}
+
 function isInViewport(element) {
   let top = element.offsetTop;
   let left = element.offsetLeft;
@@ -175,6 +187,23 @@ function setActiveElements() {
 }
 
 // Scroll to anchor ID using scrollTO event
+function scrollToSection(sectionId) {
+  const targetSection = document.getElementById(sectionId);
+  const behavior = 'smooth';
+
+  if (isScrollIntoViewSupported() && isSmoothScrollSupported()) {
+    targetSection.scrollIntoView({ behavior });
+    return true;
+  }
+
+  if (isScrollToSupported()) {
+    const top = targetSection.offsetTop;
+    window.scrollTo({ top, behavior });
+    return true;
+  }
+
+  return false;
+}
 
 /**
  * End Main Functions
@@ -202,9 +231,18 @@ window.addEventListener('DOMContentLoaded', () => {
   state.sectionList = [...document.getElementsByTagName('section')];
   state.navBarListElement = document.getElementById('navbar__list');
   buildNavMenu();
-});
 
-// Scroll to section on link click
+  // Scroll to section on link click
+  state.navBarListElement.addEventListener('click', (event) => {
+    if (event.target.nodeName === 'A') {
+      const { sectionId } = event.target.dataset;
+      const scrolledToSection = scrollToSection(sectionId);
+      if (scrolledToSection) {
+        event.preventDefault();
+      }
+    }
+  });
+});
 
 // Set sections as active
 window.addEventListener(
