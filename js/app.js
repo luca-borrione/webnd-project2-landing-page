@@ -30,10 +30,12 @@ if (typeof window.CustomEvent !== 'function') {
  */
 
 const ACTIVE_CLASS = 'active';
+const HIDDEN_CLASS = 'hidden';
 const SCROLL_END = 'SCROLL_END';
 
 const state = {
   navBarListElement: null,
+  pageHeader: null,
   scrollTimeoutId: null,
   sectionList: null,
 };
@@ -153,6 +155,18 @@ function resetActiveMenuLink() {
   }
 }
 
+function hidePageHeader() {
+  const { pageHeader } = state;
+  // pageHeader.style.display = 'none';
+  pageHeader.classList.add(HIDDEN_CLASS);
+}
+
+function showPageHeader() {
+  const { pageHeader } = state;
+  // pageHeader.style.display = 'block';
+  pageHeader.classList.remove(HIDDEN_CLASS);
+}
+
 /**
  * End Helper Functions
  * Begin Main Functions
@@ -221,15 +235,18 @@ window.addEventListener(
   () => {
     const { scrollTimeoutId } = state;
     clearTimeout(scrollTimeoutId);
-    state.scrollTimeoutId = setTimeout(scrollEnded, 50);
+    state.scrollTimeoutId = setTimeout(scrollEnded, 250);
+    hidePageHeader();
   },
   false
 );
 
 // Build menu
 window.addEventListener('DOMContentLoaded', () => {
-  state.sectionList = [...document.getElementsByTagName('section')];
   state.navBarListElement = document.getElementById('navbar__list');
+  state.sectionList = [...document.getElementsByTagName('section')];
+  state.pageHeader = document.querySelector('header.page__header');
+
   buildNavMenu();
 
   // Scroll to section on link click
@@ -249,6 +266,7 @@ window.addEventListener(
   SCROLL_END,
   () => {
     setActiveElements();
+    showPageHeader();
   },
   false
 );

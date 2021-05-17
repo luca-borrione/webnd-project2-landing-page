@@ -43,6 +43,10 @@ p {
   color: #eee;
 }
 
+.hidden {
+  opacity: 0;
+}
+
 /* ---- Layout Rules ---- */
 main {
   margin: 10vh 1em 10vh;
@@ -94,6 +98,7 @@ section {
   top: 0;
   width: 100%;
   z-index: 5;
+  transition: opacity 0.15s linear;
 }
 
 /* Footer Styles */
